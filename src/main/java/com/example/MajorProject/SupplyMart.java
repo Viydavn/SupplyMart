@@ -32,6 +32,15 @@ public class SupplyMart extends Application {
     private GridPane headerBar(){
         Image logo = new Image("C:\\Users\\Vikas Yadav\\Desktop\\Major Project\\SupplyMart\\src\\logo.PNG",120,100,false,false);
         ImageView view = new ImageView(logo);
+        Button logobutton = new Button();
+        logobutton.setGraphic(view);
+        logobutton.setOnAction((new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().addAll(productDetails.getAllProducts());
+            }
+        }));
         TextField searchfield = new TextField();
         Button searchButton = new Button("Search");
         globalLoginButton = new Button("Log In");
@@ -90,7 +99,8 @@ public class SupplyMart extends Application {
         gridPane.add(searchButton,55,2);
         searchButton.setPrefWidth(80);
         searchButton.setPrefHeight(40);
-        gridPane.add(view,2,2);
+//        gridPane.add(view,2,2);
+        gridPane.add(logobutton,2,2);
         gridPane.add(globalLoginButton,110,2);
         gridPane.add(globalLogoutButton,115,2);
         gridPane.add(customerEmailLabel,115,3);
