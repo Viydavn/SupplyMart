@@ -335,6 +335,7 @@ public class SupplyMart extends Application {
         stage.setTitle("Supply Mart!!");
         stage.getIcons().add(new Image("C:\\Users\\Vikas Yadav\\Desktop\\Major Project\\SupplyMart\\src\\logo.PNG"));
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
