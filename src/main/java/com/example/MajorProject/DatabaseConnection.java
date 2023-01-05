@@ -2,6 +2,8 @@ package com.example.MajorProject;
 import java.sql.*;
 
 public class DatabaseConnection {
+
+//    For connections to database
     private static final String databaseUrl ="jdbc:mysql://localhost:3306/new_schema1";
     private static final String userName = "root";
     private static final String password ="F501T15S70@a";
@@ -26,6 +28,7 @@ public class DatabaseConnection {
         }
         return null;
     }
+
 
     public int executeUpdateQuery(String query) {
         Statement statement = getStatement();

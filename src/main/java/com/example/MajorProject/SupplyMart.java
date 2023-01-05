@@ -17,19 +17,29 @@ import java.io.IOException;
 
 public class SupplyMart extends Application {
 
-    Pane bodyPane = new Pane();
     public static final int width =1600, height=700, headerBar=150;
 
+    Pane bodyPane = new Pane();
     LoginOrSignUpOrProductAdd loginAndSignUpAndProductadd = new LoginOrSignUpOrProductAdd();
     ProductDetails productDetails = new ProductDetails();
+
+    //global buttons
     Button globalLoginButton;
     Button globalLogoutButton;
     Button deletefromcart;
+    Button addToCartButton;
+    Button goToCartButton;
+    Button goToproducts;
+    Button deletefromproduct;
+    Button addtoProduct;
+    Button buyNowButton;
     Button globalSignUpButton;
     Label customerEmailLabel = null;
     String sellerEmail = null;
     String customerEmail = null;
 
+
+//Headerbar for logo and upper global buttons
     private GridPane headerBar(){
         Image logo = new Image("C:\\Users\\Vikas Yadav\\Desktop\\Major Project\\SupplyMart\\src\\logo.PNG",120,100,false,false);
         ImageView view = new ImageView(logo);
@@ -39,6 +49,8 @@ public class SupplyMart extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 deletefromcart.setVisible(false);
+                addtoProduct.setVisible(false);
+                deletefromproduct.setVisible(false);
                 bodyPane.getChildren().clear();
                 bodyPane.getChildren().addAll(productDetails.getAllProducts());
             }
@@ -77,8 +89,16 @@ public class SupplyMart extends Application {
                 globalLoginButton.setVisible(true);
                 globalLogoutButton.setVisible(false);
                 globalSignUpButton.setVisible(true);
+                deletefromproduct.setVisible(false);
+                goToproducts.setVisible(false);
+                addToCartButton.setVisible(true);
+                goToCartButton.setVisible(true);
+                buyNowButton.setVisible(true);
+                addtoProduct.setVisible(false);
                 customerEmailLabel.setText("Welcome User");
                 customerEmail = null;
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().addAll(productDetails.getAllProducts());
             }
         });
 
@@ -120,8 +140,8 @@ public class SupplyMart extends Application {
         return gridPane;
     }
 
-    //this is creating a grid structured layout
 
+// seller login page
     private GridPane loginsellerPage(){
         Label emailLabel = new Label("Email");
         Label passwordLabel = new Label("Password");
@@ -142,6 +162,13 @@ public class SupplyMart extends Application {
                     globalLoginButton.setVisible(false);
                     globalLogoutButton.setVisible(true);
                     globalSignUpButton.setVisible(false);
+                    goToproducts.setVisible(true);
+                    deletefromproduct.setVisible(false);
+                    deletefromproduct.setVisible(false);
+                    addtoProduct.setVisible(false);
+                    addToCartButton.setVisible(false);
+                    goToCartButton.setVisible(false);
+                    buyNowButton.setVisible(false);
                     customerEmailLabel.setText("Hi!!  " + tempCustomerName);
                     bodyPane.getChildren().clear();
 
@@ -170,6 +197,8 @@ public class SupplyMart extends Application {
         return gridPane;
     }
 
+
+//    customer login page
     private GridPane logincustomerPage(){
         Label emailLabel = new Label("Email");
         Label passwordLabel = new Label("Password");
@@ -215,6 +244,8 @@ public class SupplyMart extends Application {
         return gridPane;
     }
 
+
+// page to select who wants to login seller or customer
     private GridPane loginselectPage(){
         Button sellerloginButton = new Button("Login as a SELLER");
         Button customerloginButton = new Button("Login as a CUSTOMER");
@@ -237,9 +268,6 @@ public class SupplyMart extends Application {
             }
         });
 
-
-
-
         GridPane gridPane = new GridPane();
         gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
         gridPane.setVgap(5);
@@ -258,6 +286,8 @@ public class SupplyMart extends Application {
         return gridPane;
     }
 
+
+//    page to select who wants to sign up seller or customer
     private GridPane signupselectpage(){
         Button sellerButton = new Button("Sign Up as a SELLER");
         Button customerButton = new Button("Sign Up as a CUSTOMER");
@@ -274,15 +304,8 @@ public class SupplyMart extends Application {
             public void handle(ActionEvent actionEvent) {
                 bodyPane.getChildren().clear();
                 bodyPane.getChildren().add(signUpsellerPage());
-
-
-
             }
         });
-
-
-
-
         GridPane gridPane = new GridPane();
         gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
         gridPane.setVgap(5);
@@ -297,21 +320,18 @@ public class SupplyMart extends Application {
         customerButton.setPrefWidth(150);
         customerButton.setPrefHeight(40);
 
-
         return gridPane;
     }
 
 
-
+// page for seller to add products
     private GridPane sellerProductPage(){
-        Label productIdLabel = new Label("Product Id *");
         Label productnameLabel = new Label("Product Name *");
         Label PriceLabel = new Label("Price *");
         Label quantityLabel = new Label("Quantity *");
 
         Label mandatoryLabel = new Label("* marked are mandatory");
 
-        TextField productIdField = new TextField();
         TextField productnameField = new TextField();
         TextField PriceField = new TextField();
         TextField quantityField = new TextField();
@@ -323,16 +343,14 @@ public class SupplyMart extends Application {
         addProductButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                String productId = productIdField.getText();
                 String productname = productnameField.getText();
                 String Price = PriceField.getText();
                 String quantity = quantityField.getText();
 
-
-                if(productId.equals("") || productname.equals("") || Price.equals("")||quantity.equals("")){
+                if(productname.equals("") || Price.equals("")||quantity.equals("")){
                     dialogBox("Please fill all mandatory fields");
                 }
-                else if(loginAndSignUpAndProductadd.productAdd(productId, productname, Price, quantity)){
+                else if(loginAndSignUpAndProductadd.productAdd(productname, Price, quantity,sellerEmail)){
                     dialogBox("Added Successful");
                     bodyPane.getChildren().clear();
                     bodyPane.getChildren().add(sellerProductPage());
@@ -352,25 +370,25 @@ public class SupplyMart extends Application {
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setStyle("-fx-background-color: #F2EEE6");
 
-        gridPane.add(productIdLabel,0,0);
-        gridPane.add(productnameLabel,0,1);
-        gridPane.add(PriceLabel,2,1);
-        gridPane.add(quantityLabel,2,0);
-        gridPane.add(mandatoryLabel,0,4);
 
-        gridPane.add(productIdField,1,0);
-        gridPane.add(productnameField,1,1);
-        gridPane.add(PriceField,3,1);
-        gridPane.add(quantityField,3,0);
+        gridPane.add(productnameLabel,0,0);
+        gridPane.add(PriceLabel,0,1);
+        gridPane.add(quantityLabel,0,2);
+        gridPane.add(mandatoryLabel,0,3);
 
-        gridPane.add(addProductButton,1,4);
+
+        gridPane.add(productnameField,1,0);
+        gridPane.add(PriceField,1,1);
+        gridPane.add(quantityField,1,2);
+
+        gridPane.add(addProductButton,1,3);
 
         return gridPane;
     }
 
 
 
-
+// page for seller signuP
     private GridPane signUpsellerPage(){
         Label sellerNameLabel = new Label("Seller Name *");
         Label emailLabel = new Label("Email *");
@@ -444,7 +462,7 @@ public class SupplyMart extends Application {
     }
 
 
-
+//  page for customer signUP
     private GridPane signUpcustomerPage(){
         Label firstNameLabel = new Label("First Name *");
         Label lastNameLabel = new Label("Last Name");
@@ -517,11 +535,16 @@ public class SupplyMart extends Application {
         return gridPane;
     }
 
+//    this is footbar to add buttons in footer like add to cart, by now, products add etc
     private GridPane footerBar(){
-        Button addToCartButton = new Button("Add to Cart");
-        Button goToCartButton = new Button("Go to Cart");
-        Button buyNowButton = new Button("Buy Now");
-        deletefromcart = new Button("Delete");
+        addToCartButton = new Button("Add to Cart");
+        goToCartButton = new Button("Go to Cart");
+        buyNowButton = new Button("Buy Now");
+        deletefromcart = new Button("Remove");
+        deletefromproduct = new Button("Remove");
+        goToproducts = new Button("My Products");
+        addtoProduct = new Button("Add");
+
         buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -529,6 +552,12 @@ public class SupplyMart extends Application {
                 Product selectedProduct = productDetails.getSelectedProduct();
                 if(selectedProduct != null && OrderAndCart.placeOrder(customerEmail, selectedProduct)){
                     dialogBox("Order Placed");
+
+                    if(selectedProduct != null && OrderAndCart.deletefromCart(customerEmail, selectedProduct.getId())){
+                        bodyPane.getChildren().clear();
+                        bodyPane.getChildren().add(productDetails.getCartItems(customerEmail));
+                    }
+
                 }
                 else if(customerEmail == null){
                     dialogBox("You need to be logged In to make a order");
@@ -581,6 +610,8 @@ public class SupplyMart extends Application {
                     Product selectedProduct = productDetails.getSelectedProduct();
                     if(selectedProduct != null && OrderAndCart.deletefromCart(customerEmail, selectedProduct.getId())){
                         dialogBox("Item deleted");
+                        bodyPane.getChildren().clear();
+                        bodyPane.getChildren().add(productDetails.getCartItems(customerEmail));
                     }
                 } else{
                     dialogBox("You need to select product from the cart to Delete");
@@ -589,6 +620,55 @@ public class SupplyMart extends Application {
                 }
             }
         });
+
+        goToproducts.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(sellerEmail != null){
+                    addtoProduct.setVisible(true);
+                    deletefromproduct.setVisible(true);
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(productDetails.getMyProducts(sellerEmail));
+                }
+                else{
+                    dialogBox("Login to view your products Or No Products");
+                }
+            }
+        });
+        deletefromproduct.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(sellerEmail != null){
+                    deletefromproduct.setVisible(true);
+                    Product selectedProduct = productDetails.getSelectedProduct();
+                    if(selectedProduct != null && OrderAndCart.deletefromMyProducts(sellerEmail, selectedProduct.getId())){
+                        dialogBox("Item deleted");
+                        bodyPane.getChildren().clear();
+                        bodyPane.getChildren().add(productDetails.getMyProducts(sellerEmail));
+                    }
+                } else{
+                    dialogBox("You need to select product from the uploaded products to Delete");
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(logincustomerPage());
+                }
+            }
+        });
+
+        addtoProduct.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                        if(sellerEmail != null){
+                            deletefromproduct.setVisible(true);
+                            bodyPane.getChildren().clear();
+                            bodyPane.getChildren().add(sellerProductPage());
+                        }
+                     else{
+                        dialogBox("You need to select product from the cart to Delete");
+
+                    }
+                }
+            });
+
 
         GridPane gridPane = new GridPane();
         gridPane.setMinSize(bodyPane.getMinWidth(), headerBar-9);
@@ -602,7 +682,15 @@ public class SupplyMart extends Application {
         gridPane.add(goToCartButton,1,0);
         gridPane.add(buyNowButton,2,0);
         gridPane.add(deletefromcart,1,1);
-        deletefromcart.setVisible(false);
+        gridPane.add(goToproducts,0,0);
+        gridPane.add(deletefromproduct,1,0);
+        gridPane.add(addtoProduct,2,0);
+        addtoProduct.setPrefWidth(120);
+        addtoProduct.setPrefHeight(40);
+        goToproducts.setPrefWidth(120);
+        goToproducts.setPrefHeight(40);
+        deletefromproduct.setPrefWidth(120);
+        deletefromproduct.setPrefHeight(40);
         deletefromcart.setPrefWidth(80);
         deletefromcart.setPrefHeight(40);
         addToCartButton.setPrefWidth(80);
@@ -611,10 +699,17 @@ public class SupplyMart extends Application {
         goToCartButton.setPrefHeight(40);
         buyNowButton.setPrefWidth(80);
         buyNowButton.setPrefHeight(40);
+        deletefromcart.setVisible(false);
+        goToproducts.setVisible(false);
+        deletefromproduct.setVisible(false);
+        addtoProduct.setVisible(false);
+
+
 
         return gridPane;
     }
 
+//    Dialog box is common for all and used to give information
     public static void dialogBox(String message){
         Dialog<String> dialog = new Dialog<String>();
         dialog.setTitle("Attention!!!");
@@ -624,7 +719,7 @@ public class SupplyMart extends Application {
         dialog.showAndWait();
     }
 
-    //this is creating the main window
+    //this is creating the main window which is added on scene and scene is added to stage
     private Pane createContent(){
         Pane root = new Pane();
         root.setPrefSize(width,height+2*headerBar);
@@ -639,6 +734,8 @@ public class SupplyMart extends Application {
         return root;
     }
 
+
+//    main file where execution starts
     @Override
     public void start(Stage stage) throws IOException {
 //        FXMLLoader fxmlLoader = new FXMLLoader(SupplyMart.class.getResource("hello-view.fxml"));

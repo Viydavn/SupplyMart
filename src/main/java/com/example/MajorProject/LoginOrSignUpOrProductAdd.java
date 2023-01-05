@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 
 public class LoginOrSignUpOrProductAdd {
 
+
+//    for password encryption
     private byte[] getSHA(String input){
         try{
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -28,6 +30,8 @@ public class LoginOrSignUpOrProductAdd {
         }
         return null;
     }
+
+//for customer login
     public String customerLogin(String email, String password){
         String passafterencryption = getEncryptedPassword(password);
         String query = String.format("SELECT * FROM customer WHERE email = '%s' ", email, passafterencryption);
@@ -43,6 +47,7 @@ public class LoginOrSignUpOrProductAdd {
         return null;
     }
 
+//    for seller login
     public String sellerLogin(String email, String password){
         String passafterencryption = getEncryptedPassword(password);
         String query = String.format("SELECT * FROM seller WHERE email = '%s' ", email, passafterencryption);
@@ -59,6 +64,7 @@ public class LoginOrSignUpOrProductAdd {
     }
 
 
+//    for seller signUp
     public boolean sellerSignUp(String sellername, String GST, String email, String password, String mobile, String address){
         DatabaseConnection dbCon = new DatabaseConnection();
         String query = String.format("INSERT INTO seller (seller_name, GST, email, password, mobile, address) values('%s','%s','%s','%s','%s','%s')", sellername, GST, email, getEncryptedPassword(password), mobile, address);
@@ -71,6 +77,7 @@ public class LoginOrSignUpOrProductAdd {
         return rowCount!=0;
     }
 
+//    for customer signup
     public boolean customerSignUp(String firstName, String lastName, String email, String password, String mobile, String address){
         DatabaseConnection dbCon = new DatabaseConnection();
         String query = String.format("INSERT INTO customer (first_name, last_name, email, password, mobile, address) values('%s','%s','%s','%s','%s','%s')", firstName, lastName, email, getEncryptedPassword(password), mobile, address);
@@ -83,10 +90,11 @@ public class LoginOrSignUpOrProductAdd {
         return rowCount!=0;
     }
 
-
-    public boolean productAdd(String productId, String productname, String Price, String quantity){
+// for seller to add product
+    public boolean productAdd(String productname, String Price, String quantity,String email){
         DatabaseConnection dbCon = new DatabaseConnection();
-        String query = String.format("INSERT INTO product (product_id, name, quantity, price) values('%s','%s','%s','%s')", productId, productname,quantity,Price);
+
+        String query = String.format("INSERT INTO product (name, price, quantity,seller_id) values('%s','%s','%s',(SELECT seller_id FROM seller WHERE email = '%s'))",productname,Price,quantity,email);
         int rowCount = 0;
         try{
             rowCount = dbCon.executeUpdateQuery(query);
