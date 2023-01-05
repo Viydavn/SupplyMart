@@ -10,7 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -21,12 +20,14 @@ public class SupplyMart extends Application {
     Pane bodyPane = new Pane();
     public static final int width =1600, height=700, headerBar=150;
 
-    LoginOrSignUp loginAndSignUp = new LoginOrSignUp();
+    LoginOrSignUpOrProductAdd loginAndSignUpAndProductadd = new LoginOrSignUpOrProductAdd();
     ProductDetails productDetails = new ProductDetails();
     Button globalLoginButton;
     Button globalLogoutButton;
+    Button deletefromcart;
     Button globalSignUpButton;
     Label customerEmailLabel = null;
+    String sellerEmail = null;
     String customerEmail = null;
 
     private GridPane headerBar(){
@@ -37,6 +38,7 @@ public class SupplyMart extends Application {
         logobutton.setOnAction((new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                deletefromcart.setVisible(false);
                 bodyPane.getChildren().clear();
                 bodyPane.getChildren().addAll(productDetails.getAllProducts());
             }
@@ -62,14 +64,16 @@ public class SupplyMart extends Application {
         globalLoginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                deletefromcart.setVisible(false);
                 bodyPane.getChildren().clear();
-                bodyPane.getChildren().add(loginPage());
+                bodyPane.getChildren().add(loginselectPage());
             }
         });
 
         globalLogoutButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                deletefromcart.setVisible(false);
                 globalLoginButton.setVisible(true);
                 globalLogoutButton.setVisible(false);
                 globalSignUpButton.setVisible(true);
@@ -81,8 +85,9 @@ public class SupplyMart extends Application {
         globalSignUpButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                deletefromcart.setVisible(false);
                 bodyPane.getChildren().clear();
-                bodyPane.getChildren().add(signUpPage());
+                bodyPane.getChildren().add(signupselectpage());
             }
         });
 
@@ -116,7 +121,8 @@ public class SupplyMart extends Application {
     }
 
     //this is creating a grid structured layout
-    private GridPane loginPage(){
+
+    private GridPane loginsellerPage(){
         Label emailLabel = new Label("Email");
         Label passwordLabel = new Label("Password");
 
@@ -129,7 +135,55 @@ public class SupplyMart extends Application {
             public void handle(ActionEvent actionEvent) {
                 String email = emailTextField.getText();
                 String password = passwordTextfield.getText();
-                String tempCustomerName = loginAndSignUp.customerLogin(email,password);
+                String tempCustomerName = loginAndSignUpAndProductadd.sellerLogin(email,password);
+                if(tempCustomerName != null) {
+                    dialogBox("Login Success");
+                    sellerEmail = email;
+                    globalLoginButton.setVisible(false);
+                    globalLogoutButton.setVisible(true);
+                    globalSignUpButton.setVisible(false);
+                    customerEmailLabel.setText("Hi!!  " + tempCustomerName);
+                    bodyPane.getChildren().clear();
+
+//                    add page to add products
+                    bodyPane.getChildren().add(sellerProductPage());
+//
+                }
+                else
+                    dialogBox("Login Failed");
+            }
+        });
+
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setStyle("-fx-background-color: #F2EEE6");
+
+        gridPane.add(emailLabel,0,0);
+        gridPane.add(passwordLabel, 0,1);
+        gridPane.add(emailTextField, 1,0);
+        gridPane.add(passwordTextfield, 1,1);
+        gridPane.add(loginButton,0,2);
+
+        return gridPane;
+    }
+
+    private GridPane logincustomerPage(){
+        Label emailLabel = new Label("Email");
+        Label passwordLabel = new Label("Password");
+
+        TextField emailTextField = new TextField();
+        PasswordField passwordTextfield = new PasswordField();
+        Button loginButton = new Button("Login");
+
+        loginButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String email = emailTextField.getText();
+                String password = passwordTextfield.getText();
+                String tempCustomerName = loginAndSignUpAndProductadd.customerLogin(email,password);
                 if(tempCustomerName != null) {
                     dialogBox("Login Success");
                     customerEmail = email;
@@ -161,7 +215,237 @@ public class SupplyMart extends Application {
         return gridPane;
     }
 
-    private GridPane signUpPage(){
+    private GridPane loginselectPage(){
+        Button sellerloginButton = new Button("Login as a SELLER");
+        Button customerloginButton = new Button("Login as a CUSTOMER");
+        customerloginButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(logincustomerPage());
+
+            }
+        });
+        sellerloginButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(loginsellerPage());
+
+
+
+            }
+        });
+
+
+
+
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setStyle("-fx-background-color: #F2EEE6");
+
+        gridPane.add(sellerloginButton,1,0);
+        gridPane.add(customerloginButton,2,0);
+        sellerloginButton.setPrefWidth(150);
+        sellerloginButton.setPrefHeight(40);
+        customerloginButton.setPrefWidth(150);
+        customerloginButton.setPrefHeight(40);
+
+
+        return gridPane;
+    }
+
+    private GridPane signupselectpage(){
+        Button sellerButton = new Button("Sign Up as a SELLER");
+        Button customerButton = new Button("Sign Up as a CUSTOMER");
+        customerButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(signUpcustomerPage());
+
+            }
+        });
+        sellerButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                bodyPane.getChildren().clear();
+                bodyPane.getChildren().add(signUpsellerPage());
+
+
+
+            }
+        });
+
+
+
+
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setStyle("-fx-background-color: #F2EEE6");
+
+       gridPane.add(sellerButton,1,0);
+       gridPane.add(customerButton,2,0);
+        sellerButton.setPrefWidth(150);
+        sellerButton.setPrefHeight(40);
+        customerButton.setPrefWidth(150);
+        customerButton.setPrefHeight(40);
+
+
+        return gridPane;
+    }
+
+
+
+    private GridPane sellerProductPage(){
+        Label productIdLabel = new Label("Product Id *");
+        Label productnameLabel = new Label("Product Name *");
+        Label PriceLabel = new Label("Price *");
+        Label quantityLabel = new Label("Quantity *");
+
+        Label mandatoryLabel = new Label("* marked are mandatory");
+
+        TextField productIdField = new TextField();
+        TextField productnameField = new TextField();
+        TextField PriceField = new TextField();
+        TextField quantityField = new TextField();
+
+
+        Button addProductButton = new Button("Add");
+
+
+        addProductButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String productId = productIdField.getText();
+                String productname = productnameField.getText();
+                String Price = PriceField.getText();
+                String quantity = quantityField.getText();
+
+
+                if(productId.equals("") || productname.equals("") || Price.equals("")||quantity.equals("")){
+                    dialogBox("Please fill all mandatory fields");
+                }
+                else if(loginAndSignUpAndProductadd.productAdd(productId, productname, Price, quantity)){
+                    dialogBox("Added Successful");
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(sellerProductPage());
+                }
+                else{
+                    dialogBox("Product already registered");
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(sellerProductPage());
+                }
+            }
+        });
+
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setStyle("-fx-background-color: #F2EEE6");
+
+        gridPane.add(productIdLabel,0,0);
+        gridPane.add(productnameLabel,0,1);
+        gridPane.add(PriceLabel,2,1);
+        gridPane.add(quantityLabel,2,0);
+        gridPane.add(mandatoryLabel,0,4);
+
+        gridPane.add(productIdField,1,0);
+        gridPane.add(productnameField,1,1);
+        gridPane.add(PriceField,3,1);
+        gridPane.add(quantityField,3,0);
+
+        gridPane.add(addProductButton,1,4);
+
+        return gridPane;
+    }
+
+
+
+
+    private GridPane signUpsellerPage(){
+        Label sellerNameLabel = new Label("Seller Name *");
+        Label emailLabel = new Label("Email *");
+        Label passwordLabel = new Label("Password *");
+        Label mobileLabel = new Label("Mobile No");
+        Label addressLabel = new Label("Address");
+        Label GSTLabel = new Label("GST No. *");
+        Label mandatoryLabel = new Label("* marked are mandatory");
+
+        TextField sellerNameField = new TextField();
+        TextField emailField = new TextField();
+        TextField passwordField = new TextField();
+        TextField mobileField = new TextField();
+        TextField addressField = new TextField();
+        TextField GSTField = new TextField();
+
+        Button signUpButton = new Button("Sign Up");
+
+
+        signUpButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String sellername = sellerNameField.getText();
+                String GST = GSTField.getText();
+                String email = emailField.getText();
+                String password = passwordField.getText();
+                String mobile = mobileField.getText();
+                String address = addressField.getText();
+
+                if(sellername.equals("") || email.equals("") || password.equals("")|| GST.equals("")||address.equals("")){
+                    dialogBox("Please fill all mandatory fields");
+                }
+                else if(loginAndSignUpAndProductadd.sellerSignUp(sellername, GST, email, password, mobile, address)){
+                    dialogBox("SignUp Successful");
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(loginsellerPage());
+                }
+                else{
+                    dialogBox("Email Already registered");
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(loginsellerPage());
+                }
+            }
+        });
+
+        GridPane gridPane = new GridPane();
+        gridPane.setMinSize(bodyPane.getMinWidth(), bodyPane.getMinHeight());
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setStyle("-fx-background-color: #F2EEE6");
+
+        gridPane.add(sellerNameLabel,0,0);
+        gridPane.add(emailLabel,0,1);
+        gridPane.add(passwordLabel,2,1);
+        gridPane.add(mobileLabel,2,0);
+        gridPane.add(addressLabel,2,2);
+        gridPane.add(GSTLabel,0,2);
+        gridPane.add(mandatoryLabel,0,4);
+
+        gridPane.add(sellerNameField,1,0);
+        gridPane.add(emailField,1,1);
+        gridPane.add(passwordField,3,1);
+        gridPane.add(mobileField,3,0);
+        gridPane.add(addressField,3,2);
+        gridPane.add(GSTField,1,2);
+
+        gridPane.add(signUpButton,1,4);
+
+        return gridPane;
+    }
+
+
+
+    private GridPane signUpcustomerPage(){
         Label firstNameLabel = new Label("First Name *");
         Label lastNameLabel = new Label("Last Name");
         Label emailLabel = new Label("Email *");
@@ -179,6 +463,7 @@ public class SupplyMart extends Application {
 
         Button signUpButton = new Button("Sign Up");
 
+
         signUpButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -192,15 +477,15 @@ public class SupplyMart extends Application {
                 if(firstName.equals("") || email.equals("") || password.equals("")){
                     dialogBox("Please fill all mandatory fields");
                 }
-                else if(loginAndSignUp.customerSignUp(firstName, lastName, email, password, mobile, address)){
+                else if(loginAndSignUpAndProductadd.customerSignUp(firstName, lastName, email, password, mobile, address)){
                     dialogBox("SignUp Successful");
                     bodyPane.getChildren().clear();
-                    bodyPane.getChildren().add(loginPage());
+                    bodyPane.getChildren().add(logincustomerPage());
                 }
                 else{
                     dialogBox("Email Already registered");
                     bodyPane.getChildren().clear();
-                    bodyPane.getChildren().add(loginPage());
+                    bodyPane.getChildren().add(logincustomerPage());
                 }
             }
         });
@@ -236,9 +521,11 @@ public class SupplyMart extends Application {
         Button addToCartButton = new Button("Add to Cart");
         Button goToCartButton = new Button("Go to Cart");
         Button buyNowButton = new Button("Buy Now");
+        deletefromcart = new Button("Delete");
         buyNowButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                deletefromcart.setVisible(false);
                 Product selectedProduct = productDetails.getSelectedProduct();
                 if(selectedProduct != null && OrderAndCart.placeOrder(customerEmail, selectedProduct)){
                     dialogBox("Order Placed");
@@ -256,14 +543,15 @@ public class SupplyMart extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if(customerEmail != null){
+                    deletefromcart.setVisible(false);
                     Product selectedProduct = productDetails.getSelectedProduct();
                     if(selectedProduct != null && OrderAndCart.addToCart(customerEmail, selectedProduct.getId())){
                         dialogBox("Item added");
                     }
                 } else{
-                    dialogBox("You need to LogIn first and then try adding to cart");
+                    dialogBox("You need to Login first and then try adding to cart");
                     bodyPane.getChildren().clear();
-                    bodyPane.getChildren().add(loginPage());
+                    bodyPane.getChildren().add(logincustomerPage());
                 }
             }
         });
@@ -271,14 +559,33 @@ public class SupplyMart extends Application {
         goToCartButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+
                 if(customerEmail != null){
+                    deletefromcart.setVisible(true);
                     bodyPane.getChildren().clear();
                     bodyPane.getChildren().add(productDetails.getCartItems(customerEmail));
                 }
                 else{
-                    dialogBox("LogIn to view your cart");
+                    dialogBox("Login to view your cart");
                     bodyPane.getChildren().clear();
-                    bodyPane.getChildren().add(loginPage());
+                    bodyPane.getChildren().add(logincustomerPage());
+                }
+            }
+        });
+
+        deletefromcart.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(customerEmail != null){
+                    deletefromcart.setVisible(true);
+                    Product selectedProduct = productDetails.getSelectedProduct();
+                    if(selectedProduct != null && OrderAndCart.deletefromCart(customerEmail, selectedProduct.getId())){
+                        dialogBox("Item deleted");
+                    }
+                } else{
+                    dialogBox("You need to select product from the cart to Delete");
+                    bodyPane.getChildren().clear();
+                    bodyPane.getChildren().add(logincustomerPage());
                 }
             }
         });
@@ -294,6 +601,10 @@ public class SupplyMart extends Application {
         gridPane.add(addToCartButton,0,0);
         gridPane.add(goToCartButton,1,0);
         gridPane.add(buyNowButton,2,0);
+        gridPane.add(deletefromcart,1,1);
+        deletefromcart.setVisible(false);
+        deletefromcart.setPrefWidth(80);
+        deletefromcart.setPrefHeight(40);
         addToCartButton.setPrefWidth(80);
         addToCartButton.setPrefHeight(40);
         goToCartButton.setPrefWidth(80);

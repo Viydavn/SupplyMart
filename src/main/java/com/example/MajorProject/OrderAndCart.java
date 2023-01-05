@@ -26,4 +26,17 @@ public class OrderAndCart {
         return rowCount!=0;
     }
 
+
+    public static boolean deletefromCart(String customerEmail, int product_id){
+        DatabaseConnection databaseConnection = new DatabaseConnection();
+        String query = String.format("DELETE FROM cart where(SELECT customer_id FROM customer WHERE email = '%s') && product_id = '%s'",customerEmail, product_id);
+        int rowCount = 0;
+        try{
+            rowCount = databaseConnection.executeUpdateQuery(query);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return rowCount!=0;
+    }
+
 }
