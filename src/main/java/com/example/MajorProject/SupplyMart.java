@@ -18,16 +18,16 @@ import java.io.IOException;
 
 public class SupplyMart extends Application {
 
-        Pane bodyPane = new Pane();
-        public static final int width =1600, height=700, headerBar=150;
+    Pane bodyPane = new Pane();
+    public static final int width =1600, height=700, headerBar=150;
 
-        LoginOrSignUp loginAndSignUp = new LoginOrSignUp();
-        ProductDetails productDetails = new ProductDetails();
-        Button globalLoginButton;
-        Button globalLogoutButton;
-        Button globalSignUpButton;
-        Label customerEmailLabel = null;
-        String customerEmail = null;
+    LoginOrSignUp loginAndSignUp = new LoginOrSignUp();
+    ProductDetails productDetails = new ProductDetails();
+    Button globalLoginButton;
+    Button globalLogoutButton;
+    Button globalSignUpButton;
+    Label customerEmailLabel = null;
+    String customerEmail = null;
 
     private GridPane headerBar(){
         Image logo = new Image("C:\\Users\\Vikas Yadav\\Desktop\\Major Project\\SupplyMart\\src\\logo.PNG",120,100,false,false);
@@ -314,7 +314,7 @@ public class SupplyMart extends Application {
     }
 
     //this is creating the main window
-        private Pane createContent(){
+    private Pane createContent(){
         Pane root = new Pane();
         root.setPrefSize(width,height+2*headerBar);
 

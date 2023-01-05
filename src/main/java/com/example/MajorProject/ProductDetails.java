@@ -1,7 +1,5 @@
 package com.example.MajorProject;
 
-
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
